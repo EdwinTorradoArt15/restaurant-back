@@ -7,5 +7,6 @@ import { PrismaModule } from "src/prisma/prisma.module";
   providers: [RoleService],
   controllers: [RoleController],
   imports: [PrismaModule],
+  exports: [RoleService]
 })
 export class RoleModule {}
