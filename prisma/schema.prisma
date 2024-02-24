@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id         Int          @id @default(autoincrement())
+  password   String       @db.VarChar(255)
+  email      String       @unique @db.VarChar(255)
+  estado     Boolean      @default(true)
+  user_data  userData?
+  logSession logSession[]
+  userRole   userRole[]
+}
+
+model userData {
+  id               Int    @id @default(autoincrement())
+  telefono         String @db.VarChar(255)
+  primer_nombre    String @db.VarChar(255)
+  segundo_nombre   String @db.VarChar(255)
+  primer_apellido  String @db.VarChar(255)
+  segundo_apellido String @db.VarChar(255)
+  foto             String @db.VarChar(255)
+  user             user   @relation(fields: [userId], references: [id])
+  userId           Int    @unique
+}
+
+model logSession {
+  id           Int      @id @default(autoincrement())
+  fecha_sesion DateTime @default(now())
+  request      String   @db.Text
+  response     String   @db.Text
+  ip           String   @db.VarChar(255)
+  user         user     @relation(fields: [userId], references: [id])
+  userId       Int
+}
+
+model role {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(255)
+  estado         Boolean          @default(true)
+  userRole       userRole[]
+  rolPermissions rolPermissions[]
+}
+
+model userRole {
+  id     Int  @id @default(autoincrement())
+  user   user @relation(fields: [userId], references: [id])
+  userId Int
+  role   role @relation(fields: [roleId], references: [id])
+  roleId Int
+}
+
+model permissions {
+  id             Int              @id @default(autoincrement())
+  nombre         String           @db.VarChar(255)
+  link           String           @db.VarChar(255)
+  estado         Boolean          @default(true)
+  rolPermissions rolPermissions[]
+  menu           menu             @relation(fields: [menuId], references: [id])
+  menuId         Int
+}
+
+model rolPermissions {
+  id            Int         @id @default(autoincrement())
+  role          role        @relation(fields: [roleId], references: [id])
+  roleId        Int
+  permissions   permissions @relation(fields: [permissionsId], references: [id])
+  permissionsId Int
+}
+
+model menu {
+  id          Int           @id @default(autoincrement())
+  nombre      String        @db.VarChar(255)
+  icono       String        @db.VarChar(255)
+  estado      Boolean       @default(true)
+  permissions permissions[]
+}
