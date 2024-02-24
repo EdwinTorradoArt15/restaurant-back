@@ -21,15 +21,10 @@ export class MenuService {
   }
 
   // Crear un menu
-  async createMenu(data: {
-    nombre: string;
-    icono: string;
-    estado: boolean;
-  }): Promise<menu> {
+  async createMenu(data: { nombre: string; icono: string }): Promise<menu> {
     const newData = {
       nombre: data.nombre.toUpperCase(),
       icono: data.icono,
-      estado: data.estado,
     };
     return this.prisma.menu.create({
       data: newData,
@@ -42,13 +37,11 @@ export class MenuService {
     data: {
       nombre: string;
       icono: string;
-      estado: boolean;
     }
   ): Promise<menu> {
     const newData = {
       nombre: data.nombre.toUpperCase(),
       icono: data.icono,
-      estado: data.estado,
     };
     return this.prisma.menu.update({
       where: {

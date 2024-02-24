@@ -24,13 +24,11 @@ export class PermissionsService {
   async createPermission(data: {
     nombre: string;
     link: string;
-    estado: boolean;
     menuId: number;
   }): Promise<permissions> {
     const newData = {
       nombre: data.nombre.toUpperCase(),
       link: data.link,
-      estado: data.estado,
       menuId: data.menuId,
     };
     return this.prisma.permissions.create({
@@ -41,12 +39,11 @@ export class PermissionsService {
   //   Actualizar un permiso
   async updatePermission(
     id: number,
-    data: { nombre: string; link: string; estado: boolean; menuId: number }
+    data: { nombre: string; link: string; menuId: number }
   ): Promise<permissions> {
     const newData = {
       nombre: data.nombre.toUpperCase(),
       link: data.link,
-      estado: data.estado,
       menuId: data.menuId,
     };
     return this.prisma.permissions.update({
