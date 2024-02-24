@@ -22,6 +22,16 @@ export class MenuController {
     return this.menuService.getAllMenus();
   }
 
+  //   Obtener un menu
+  @Get(":id")
+  async getMenu(@Param("id") id: string) {
+    const menu = await this.menuService.getMenu(Number(id));
+    if (!menu) {
+      throw new NotFoundException(`El menu con el id ${id} no existe`);
+    }
+    return menu;
+  }
+
   //   Crear un menu
   @Post()
   async createMenu(@Body() data: menu) {
@@ -32,16 +42,6 @@ export class MenuController {
       throw new BadRequestException("El icono del menu es requerido");
     }
     return this.menuService.createMenu(data);
-  }
-
-  //   Obtener un menu
-  @Get(":id")
-  async getMenu(@Param("id") id: string) {
-    const menu = await this.menuService.getMenu(Number(id));
-    if (!menu) {
-      throw new NotFoundException(`El menu con el id ${id} no existe`);
-    }
-    return menu;
   }
 
   //   Eliminar un menu
