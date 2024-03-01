@@ -18,7 +18,6 @@ export class AuthController {
   @Post("login")
   // @UseGuards(LocalGuard)
   async login(@Body() authPayload: AuthPayloadDto, @Request() req: any) {
-    console.log("request ->",req)
     const { body, method, originalUrl } = req;
     const request = `${method} ${originalUrl} - ${JSON.stringify(body)}`;
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
