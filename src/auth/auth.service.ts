@@ -20,4 +20,25 @@ export class AuthService {
       return this.jwtService.sign(user);
     }
   }
+
+  async logSession(
+    request: string,
+    response: string,
+    ip: string,
+    email?: string
+  ) {
+    const userId = email
+      ? await this.prisma.user
+          .findUnique({ where: { email } })
+          .then((user) => user.id)
+      : null;
+    await this.prisma.logSession.create({
+      data: {
+        request,
+        response: JSON.stringify(response),
+        ip,
+        user: { connect: { id: userId } },
+      },
+    });
+  }
 }
