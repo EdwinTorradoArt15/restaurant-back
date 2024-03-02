@@ -6,21 +6,21 @@ import {
   UseGuards,
   Request,
   UnauthorizedException,
+  Get,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthPayloadDto } from "./dto/auth.dto";
-import { LocalGuard } from "./guards/local.guard";
+import { JwtAuthGuard } from "./guards/jwt.guard";
 
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("login")
-  // @UseGuards(LocalGuard)
   async login(@Body() authPayload: AuthPayloadDto, @Request() req: any) {
     const { body, method, originalUrl } = req;
     const request = `${method} ${originalUrl} - ${JSON.stringify(body)}`;
-    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
     try {
       const user = await this.authService.validateUser(authPayload);
       if (!user) {
@@ -66,5 +66,11 @@ export class AuthController {
       );
       throw new UnauthorizedException(response);
     }
+  }
+
+  @Get("register")
+  @UseGuards(JwtAuthGuard)
+  async test() {
+    return "test";
   }
 }
