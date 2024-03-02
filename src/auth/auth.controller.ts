@@ -2,7 +2,6 @@ import {
   Controller,
   Post,
   Body,
-  HttpException,
   Request,
   UnauthorizedException,
 } from "@nestjs/common";
@@ -17,7 +16,7 @@ export class AuthController {
   async login(@Body() authPayload: AuthPayloadDto, @Request() req: any) {
     const { body, method, originalUrl } = req;
     const request = `${method} ${originalUrl} - ${JSON.stringify(body)}`;
-    const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+    const ip = req.headers["x-real-ip"] || req.connection.remoteAddress;
     try {
       const user = await this.authService.validateUser(authPayload);
       if (!user) {
@@ -33,7 +32,7 @@ export class AuthController {
           ip,
           authPayload.email
         );
-        throw new HttpException(response, 401);
+        throw new UnauthorizedException(response);
       }
       const response = {
         response: "Inicio de sesión exitoso",

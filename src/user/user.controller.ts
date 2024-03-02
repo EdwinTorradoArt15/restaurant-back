@@ -6,7 +6,6 @@ import {
   Delete,
   Body,
   Param,
-  BadRequestException,
   NotFoundException,
   UseGuards,
 } from "@nestjs/common";
@@ -14,6 +13,7 @@ import { UserService } from "./user.service";
 import { RoleService } from "src/role/role.service";
 import { user, userData } from "@prisma/client";
 import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
+import * as bcrypt from "bcrypt";
 
 @Controller("user")
 export class UserController {
@@ -48,7 +48,12 @@ export class UserController {
     if (!role) {
       throw new NotFoundException(`El rol no existe`);
     }
-    return this.userService.createUser(data);
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const userDataWithHashedPassword = {
+      ...data,
+      password: hashedPassword,
+    };
+    return this.userService.createUser(userDataWithHashedPassword);
   }
 
   //   Actualizar usuario
@@ -65,6 +70,10 @@ export class UserController {
     const user = await this.userService.getUser(Number(id));
     if (!user) {
       throw new NotFoundException(`El usuario con id ${id} no existe`);
+    }
+    if (data.password) {
+      const hashedPassword = await bcrypt.hash(data.password, 10);
+      data.password = hashedPassword;
     }
     return this.userService.updateUser(Number(id), data);
   }
