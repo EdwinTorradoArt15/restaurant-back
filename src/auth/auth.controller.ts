@@ -3,14 +3,11 @@ import {
   Post,
   Body,
   HttpException,
-  UseGuards,
   Request,
   UnauthorizedException,
-  Get,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthPayloadDto } from "./dto/auth.dto";
-import { JwtAuthGuard } from "./guards/jwt.guard";
 
 @Controller("auth")
 export class AuthController {
@@ -66,11 +63,5 @@ export class AuthController {
       );
       throw new UnauthorizedException(response);
     }
-  }
-
-  @Get("register")
-  @UseGuards(JwtAuthGuard)
-  async test() {
-    return "test";
   }
 }

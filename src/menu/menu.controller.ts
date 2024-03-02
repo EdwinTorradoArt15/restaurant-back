@@ -8,9 +8,11 @@ import {
   Param,
   BadRequestException,
   NotFoundException,
+  UseGuards,
 } from "@nestjs/common";
 import { MenuService } from "./menu.service";
 import { menu } from "@prisma/client";
+import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
 
 @Controller("menu")
 export class MenuController {
@@ -18,12 +20,14 @@ export class MenuController {
 
   //   Obtener todos los menus
   @Get()
+  @UseGuards(JwtAuthGuard)
   async getAllMenus() {
     return this.menuService.getAllMenus();
   }
 
   //   Obtener un menu
   @Get(":id")
+  @UseGuards(JwtAuthGuard)
   async getMenu(@Param("id") id: string) {
     const menu = await this.menuService.getMenu(Number(id));
     if (!menu) {
@@ -34,6 +38,7 @@ export class MenuController {
 
   //   Crear un menu
   @Post()
+  @UseGuards(JwtAuthGuard)
   async createMenu(@Body() data: menu) {
     if (!data.nombre) {
       throw new BadRequestException("El nombre del menu es requerido");
@@ -46,6 +51,7 @@ export class MenuController {
 
   //   Eliminar un menu
   @Delete(":id")
+  @UseGuards(JwtAuthGuard)
   async deleteMenu(@Param("id") id: string) {
     const menu = await this.menuService.getMenu(Number(id));
     if (!menu) {
@@ -57,6 +63,7 @@ export class MenuController {
 
   //   Actualizar un menu
   @Put(":id")
+  @UseGuards(JwtAuthGuard)
   async updateMenu(@Param("id") id: string, @Body() data: menu) {
     const menu = await this.menuService.getMenu(Number(id));
     if (!menu) {

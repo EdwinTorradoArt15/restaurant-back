@@ -8,9 +8,11 @@ import {
   Param,
   BadRequestException,
   NotFoundException,
+  UseGuards,
 } from "@nestjs/common";
 import { RoleService } from "./role.service";
 import { role } from "@prisma/client";
+import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
 
 @Controller("role")
 export class RoleController {
@@ -18,12 +20,14 @@ export class RoleController {
 
   //   Obtener todos los roles
   @Get()
+  @UseGuards(JwtAuthGuard)
   async getAllRoles() {
     return this.roleService.getAllRoles();
   }
 
   //   Obtener un rol
   @Get(":id")
+  @UseGuards(JwtAuthGuard)
   async getRole(@Param("id") id: string) {
     const role = await this.roleService.getRole(Number(id));
     if (!role) {
@@ -33,6 +37,7 @@ export class RoleController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async createRole(@Body() data: role) {
     if (!data.name) {
       throw new BadRequestException("El nombre del rol es requerido");
@@ -41,6 +46,7 @@ export class RoleController {
   }
 
   @Put(":id")
+  @UseGuards(JwtAuthGuard)
   async updateRole(@Param("id") id: string, @Body() data: role) {
     const role = await this.roleService.getRole(Number(id));
     if (!role) {
@@ -50,6 +56,7 @@ export class RoleController {
   }
 
   @Delete(":id")
+  @UseGuards(JwtAuthGuard)
   async deleteRole(@Param("id") id: string) {
     const role = await this.roleService.getRole(Number(id));
     if (!role) {

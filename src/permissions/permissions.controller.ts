@@ -8,10 +8,12 @@ import {
   Param,
   BadRequestException,
   NotFoundException,
+  UseGuards,
 } from "@nestjs/common";
 import { PermissionsService } from "./permissions.service";
 import { MenuService } from "src/menu/menu.service";
 import { permissions } from "@prisma/client";
+import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
 
 @Controller("permissions")
 export class PermissionsController {
@@ -21,11 +23,13 @@ export class PermissionsController {
   ) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async getAllPermissions() {
     return this.permissionsService.getAllPermissions();
   }
 
   @Get(":id")
+  @UseGuards(JwtAuthGuard)
   async getPermission(@Param("id") id: string) {
     const permission = await this.permissionsService.getPermission(Number(id));
     if (!permission) {
@@ -35,6 +39,7 @@ export class PermissionsController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async createPermission(@Body() data: permissions) {
     const menu = await this.menuService.getMenu(data.menuId);
     if (!menu) {
@@ -53,6 +58,7 @@ export class PermissionsController {
   }
 
   @Put(":id")
+  @UseGuards(JwtAuthGuard)
   async updatePermission(@Param("id") id: string, @Body() data: permissions) {
     const menu = await this.menuService.getMenu(data.menuId);
     if (!menu) {
@@ -73,6 +79,7 @@ export class PermissionsController {
   }
 
   @Delete(":id")
+  @UseGuards(JwtAuthGuard)
   async deletePermission(@Param("id") id: string) {
     const permission = await this.permissionsService.getPermission(Number(id));
     if (!permission) {

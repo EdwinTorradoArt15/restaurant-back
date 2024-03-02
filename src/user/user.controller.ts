@@ -8,10 +8,12 @@ import {
   Param,
   BadRequestException,
   NotFoundException,
+  UseGuards,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { RoleService } from "src/role/role.service";
 import { user, userData } from "@prisma/client";
+import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
 
 @Controller("user")
 export class UserController {
@@ -22,12 +24,14 @@ export class UserController {
 
   //  Obtener todos los usuarios
   @Get()
+  @UseGuards(JwtAuthGuard)
   async getAllUsers() {
     return this.userService.getAllUsers();
   }
 
   //   Obtener un usuario
   @Get(":id")
+  @UseGuards(JwtAuthGuard)
   async getUser(@Param("id") id: string) {
     const user = await this.userService.getUser(Number(id));
     if (!user) {
@@ -38,6 +42,7 @@ export class UserController {
 
   //   Crear usuario
   @Post()
+  @UseGuards(JwtAuthGuard)
   async createUser(@Body() data: user & { user_data: userData }) {
     const role = await this.roleService.getRole(data.roleId);
     if (!role) {
@@ -48,6 +53,7 @@ export class UserController {
 
   //   Actualizar usuario
   @Put(":id")
+  @UseGuards(JwtAuthGuard)
   async updateUser(
     @Param("id") id: string,
     @Body() data: user & { user_data: userData }
@@ -65,6 +71,7 @@ export class UserController {
 
   //   Eliminar usuario
   @Delete(":id")
+  @UseGuards(JwtAuthGuard)
   async deleteUser(@Param("id") id: string) {
     const existingUser = await this.userService.getUser(Number(id));
     if (!existingUser) {
