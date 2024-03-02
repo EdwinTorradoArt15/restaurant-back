@@ -4,6 +4,7 @@ import {
   Body,
   Request,
   UnauthorizedException,
+  Ip,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthPayloadDto } from "./dto/auth.dto";
@@ -13,10 +14,13 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("login")
-  async login(@Body() authPayload: AuthPayloadDto, @Request() req: any) {
+  async login(
+    @Ip() ip: string,
+    @Body() authPayload: AuthPayloadDto,
+    @Request() req: any
+  ) {
     const { body, method, originalUrl } = req;
     const request = `${method} ${originalUrl} - ${JSON.stringify(body)}`;
-    const ip = req.headers["x-real-ip"] || req.connection.remoteAddress;
     try {
       const user = await this.authService.validateUser(authPayload);
       if (!user) {
